@@ -1,8 +1,8 @@
 # akochan-reviewer
 
 [![GitHub Workflow Status](https://github.com/Equim-chan/akochan-reviewer/workflows/build/badge.svg)](https://github.com/Equim-chan/akochan-reviewer/actions)
-[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/Equim-chan/akochan-reviewer?include_prereleases)](https://github.com/Equim-chan/akochan-reviewer/releases)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Equim-chan/akochan-reviewer)
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/vg-mjg/akochan-reviewer?include_prereleases)](https://github.com/vg-mjg/akochan-reviewer/releases)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/vg-mjg/akochan-reviewer)
 [![License](https://img.shields.io/github/license/Equim-chan/akochan-reviewer)](https://github.com/Equim-chan/akochan-reviewer/blob/master/LICENSE)
 
 Review your Tenhou or Mahjong Soul (Jantama) log with mahjong AI akochan.
@@ -15,9 +15,18 @@ Review your Tenhou or Mahjong Soul (Jantama) log with mahjong AI akochan.
 - Download the latest release
 - Open review-online.bat
 - Paste majsoul log and press enter
+- Enjoy getting bullied by the best enko JK
+![ako](https://user-images.githubusercontent.com/49875739/162527459-56cfd974-2c9e-4ec7-a7b3-0f4537a6cde5.png)
 
 ## Example
 ```console
+$ # Review majsoul
+$ review-online.bat
+
+$ # Alternatively, if the online bot dies
+$ review-onffline.bat
+
+
 $ # Review https://tenhou.net/0/?log=2019050417gm-0029-0000-4f2a8622&tw=2
 $ # Note that you may need to quote it in the shell to escape the string
 $ akochan-reviewer "https://tenhou.net/0/?log=2019050417gm-0029-0000-4f2a8622&tw=2"
@@ -104,6 +113,9 @@ ARGS:
 ```
 
 ## Build
+
+<details>
+    
 ### Build akochan
 First of all, build [akochan](https://github.com/critter-mj/akochan).
 
@@ -196,6 +208,7 @@ $ docker build -t akochan-reviewer:latest .
 $ docker run --rm akochan-reviewer:latest --no-open -t 2019050417gm-0029-0000-4f2a8622 -a 3 -o - > report.html
 $ open report.html  # or just open in browser
 ```
+</details>
 
 ## Troubleshooting
 ### `Assertion failed` errors on Windows
