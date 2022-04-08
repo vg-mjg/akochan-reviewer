@@ -1,5 +1,3 @@
-# There is a brand new stronger mahjong AI engine almost ready for use. Check [this post](https://gist.github.com/Equim-chan/cf3f01735d5d98f1e7be02e94b288c56) for details.
-
 # akochan-reviewer
 
 [![GitHub Workflow Status](https://github.com/Equim-chan/akochan-reviewer/workflows/build/badge.svg)](https://github.com/Equim-chan/akochan-reviewer/actions)
@@ -13,7 +11,10 @@ Review your Tenhou or Mahjong Soul (Jantama) log with mahjong AI akochan.
 
 **This tool is still in early stages. There are still lots of features to be implemented, and breaking changes may be made at anytime. Suggestions and contributions are welcome. 日本語もおｋ.**
 
-### [How to Review Mahjong Soul Logs (updated 2021-09-26)](https://github.com/Equim-chan/akochan-reviewer/blob/master/mjsoul.adoc)
+### How to Review Mahjong Soul Logs 
+- Download the latest release
+- Open review-online.bat
+- Paste majsoul log and press enter
 
 ## Example
 ```console
