@@ -15,6 +15,7 @@ static TEMPLATES: Lazy<Tera> = Lazy::new(|| {
     tera.register_function("kyoku_to_string_ja", kyoku_to_string_ja);
     tera.register_function("kyoku_to_string_en", kyoku_to_string_en);
     tera.register_function("pretty_round", pretty_round);
+	tera.register_function("pretty_round_two", pretty_round_two);
 
     tera.add_raw_templates(vec![
         ("macros.html", include_str!("../templates/macros.html")),
@@ -85,6 +86,21 @@ fn kyoku_to_string_en(args: &HashMap<String, Value>) -> tera::Result<Value> {
 #[allow(clippy::unnecessary_wraps)]
 fn pretty_round(args: &HashMap<String, Value>) -> tera::Result<Value> {
     let prec = args.get("prec").and_then(|p| p.as_u64()).unwrap_or(5);
+
+    if let Some(num) = args.get("num").and_then(|n| n.as_f64()) {
+        let pow = (10usize).pow(prec as u32) as f64;
+        let f = (num * pow).round() / pow;
+        let s = format!("{:.1$}", f, prec as usize);
+
+        return Ok(Value::String(s));
+    }
+
+    Ok(Value::Null)
+}
+
+#[allow(clippy::unnecessary_wraps)]
+fn pretty_round_two(args: &HashMap<String, Value>) -> tera::Result<Value> {
+    let prec = args.get("prec").and_then(|p| p.as_u64()).unwrap_or(2);
 
     if let Some(num) = args.get("num").and_then(|n| n.as_f64()) {
         let pow = (10usize).pow(prec as u32) as f64;

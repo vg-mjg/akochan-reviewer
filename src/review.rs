@@ -24,8 +24,8 @@ pub struct Review {
 pub struct KyokuReview {
     pub kyoku: u8, // in tenhou.net/6 format, counts from 0
     pub honba: u8,
+	pub hand_score: f64,
     pub end_status: Vec<Event>, // must be either multiple Horas or one Ryukyoku
-
     pub entries: Vec<Entry>,
 }
 
@@ -34,6 +34,7 @@ pub struct KyokuReview {
 pub struct Entry {
     pub acceptance: Acceptance,
     pub junme: u8,
+	pub dev: f64,
     pub actor: u8,
     #[serde_as(as = "DisplayFromStr")]
     pub pai: Pai,
@@ -135,6 +136,9 @@ pub fn review(review_args: &ReviewArgs) -> Result<Review> {
     let mut total_tolerated = 0;
     let mut total_problems = 0;
     let mut raw_score = 0.;
+	
+	let mut kyoku_total_reviewed = 0;
+	let mut kyoku_total_score = 0.;
 
     let mut kyoku_review = KyokuReview::default();
     let mut state = State::new(target_actor);
@@ -165,13 +169,26 @@ pub fn review(review_args: &ReviewArgs) -> Result<Review> {
                 let kyoku = (bakaze.as_u8() - Pai::East.as_u8()) * 4 + kk - 1;
                 kyoku_review.kyoku = kyoku;
                 kyoku_review.honba = honba;
+				kyoku_review.hand_score = 0.0;
                 is_reached = false;
-
+				
+				kyoku_total_reviewed = 0;
+				kyoku_total_score = 0.;
+				
                 continue;
             }
 
             Event::EndKyoku => {
                 kyoku_review.entries = entries.clone();
+
+				if kyoku_total_reviewed==0 
+				{
+						kyoku_review.hand_score=0.0;
+				}
+				else 
+				{
+					kyoku_review.hand_score = (kyoku_total_score / kyoku_total_reviewed as f64).powf(2.); // anon edit
+				}
                 entries.clear();
 
                 kyoku_reviews.push(kyoku_review.clone());
@@ -182,6 +199,7 @@ pub fn review(review_args: &ReviewArgs) -> Result<Review> {
             }
 
             Event::Hora { .. } | Event::Ryukyoku { .. } => {
+				kyoku_review.hand_score=0.0;
                 kyoku_review.end_status.push(event.clone());
                 continue;
             }
@@ -264,6 +282,7 @@ pub fn review(review_args: &ReviewArgs) -> Result<Review> {
             }
         }
 
+		let mut dev = 0.0;
         let expected_action = &actions[0].moves; // best move
         let is_equal_or_innocent = compare_action(actual_action, expected_action, target_actor)
             .context("invalid state in event")?;
@@ -307,7 +326,7 @@ pub fn review(review_args: &ReviewArgs) -> Result<Review> {
                     let error = expected_ev - actual_ev;
                     let move_score = if range > 0. { 1. - error / range } else { 1. };
 
-                    let dev = expected_ev - actual_ev;
+                    dev = expected_ev - actual_ev;
                     if dev <= deviation_threshold {
                         if verbose {
                             log!(
@@ -361,10 +380,13 @@ pub fn review(review_args: &ReviewArgs) -> Result<Review> {
         };
         total_reviewed += 1;
         raw_score += move_score;
+		kyoku_total_reviewed += 1;
+		kyoku_total_score += move_score;
 
-        let entry = Entry {
+       let entry = Entry {
             acceptance,
-            junme,
+			junme,
+			dev,
             actor,
             pai,
             is_kakan,
@@ -373,6 +395,7 @@ pub fn review(review_args: &ReviewArgs) -> Result<Review> {
             actual: actual_action_strict,
             details: actions,
         };
+
         log!(
             "review entry created: {:?} ({}/{}/{}, {:.03})",
             acceptance,

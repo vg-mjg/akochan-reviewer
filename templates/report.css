@@ -10,6 +10,68 @@ body[horizontal] {
   max-width: 1600px;
 }
 
+.akodisagree
+{
+  background-image: url(ako.png);
+  background-repeat: no-repeat;
+  background-position: right top 65px; 
+}
+
+.akoface1{background-image: url(img/akoface1.png);}
+.akoface2{background-image: url(img/akoface2.png);}
+.akoface3{background-image: url(img/akoface3.png);}
+.akoface4{background-image: url(img/akoface4.png);}
+.akoface5{background-image: url(img/akoface5.png);}
+
+details.akodisagree
+{
+	position: relative;
+}
+
+.akotext
+{
+	position: absolute;
+	left: 405px;
+	top: 125px;
+	width: 220px;
+	text-align: center;
+	/* border: 1px solid #aaa; */
+}
+
+.top-score
+{
+    margin-left: 1.5em;
+}
+
+.end-score-item {
+  margin-left: 1em;
+      list-style: none;
+  padding-left: 0;
+}
+
+.end-score {
+  color: #666;
+  font-weight: normal;
+}
+
+.end-score {
+  color: #666;
+}
+
+.kyoku-heading .end-score
+{
+  font-size: 75%;
+  font-weight: normal;
+  line-height: 75%;
+}
+
+.togglelinks
+{
+  text-align:right;
+  margin:5px 0px;
+  padding:0;
+}
+
 h1 {
   font-size: 2em;
 }
@@ -139,6 +201,7 @@ table.stat {
   table-layout: fixed;
   text-align: center;
   width: 100%;
+  background-color:#f2f2f2;
 }
 table.stat th, td {
   padding: 3px;

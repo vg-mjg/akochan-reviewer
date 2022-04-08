@@ -1,3 +1,224 @@
+{%- macro ra(act) -%}
+  {{ self::render_action_ako(action=act) }}
+{%- endmacro ra -%}
+
+
+{%- macro render_akotext(drop, dev, action) -%}
+  <!-- Generate a different line based on how bad the discard was -->
+  {%- if action[0].type == "chi" -%} 
+    <!-- 2xPAI Chii, cut PAI -->
+    {%- if drop>dev*50 -%} {{ self::ra(act=action) }} is a must call senpai!
+    {%- elif drop>dev*20 -%} {{ self::ra(act=action) }} is worth serious consideration.
+	{%- elif drop>dev*19.5 -%} Chi... Chi? Chi! CHIIIII!
+    {%- elif drop>dev*5 -%} You could {{ self::ra(act=action) }} here.
+	{%- elif drop>dev*4.9 -%} {{ self::ra(act=action) }} and you can make a sandwich.
+    {%- elif drop>dev*2 -%} {{ self::ra(act=action) }} is a possible call.
+    {% else -%} {{ self::ra(act=action) }} maybe?
+    {%- endif -%}
+	
+  {%- elif action[0].type == "pon" -%} 
+	 <!-- 2xPAI Pon, cut PAI -->
+    {%- if drop>dev*50 -%} {{ self::ra(act=action) }} would be my number one priority.
+    {%- elif drop>dev*20 -%} You can {{ self::ra(act=action) }} here senpai.
+	{%- elif drop>dev*19.5 -%} Pon, Pon, {{ self::ra(act=action) }}
+    {%- elif drop>dev*5 -%} {{ self::ra(act=action) }} makes sense.
+    {%- elif drop>dev*2 -%} Perhaps {{ self::ra(act=action) }} is a little better
+    {% else -%} {{ self::ra(act=action) }} if you want to call senpai.
+    {%- endif -%}	 	 
+	 
+  {%- elif action[0].type == "reach" -%} 
+	 <!-- Discard PAI Riichi -->
+	{%- if drop>dev*100 -%} You should {{ self::ra(act=action) }} we can score so many points!
+    {%- elif drop>dev*50 -%} Just {{ self::ra(act=action) }} why are you holding back senpai?
+	{%- elif drop>dev*40 -%} This is large you should {{ self::ra(act=action) }}.
+	{%- elif drop>dev*30 -%} {{ self::ra(act=action) }} the gain is significant.
+	{%- elif drop>dev*20 -%} {{ self::ra(act=action) }} would be correct digital play.
+    {%- elif drop>dev*10 -%} You could {{ self::ra(act=action) }} it is positive EV.
+    {%- elif drop>dev*5 -%} I do like to riichi so {{ self::ra(act=action) }} perhaps.
+    {% else -%} I'm not sure maybe {{ self::ra(act=action) }}? It is a hard decision.
+    {%- endif -%}	 	 
+	 
+  {%- elif action[0].type == "ankan" -%} 
+	 <!-- Kan PAI -->
+	{%- if drop>dev*40 -%} You must, I need it, I want it, {{ self::ra(act=action) }}!
+    {%- elif drop>dev*20 -%} {{ self::ra(act=action) }}  it and don't look back.
+    {%- elif drop>dev*5 -%} Four of the same tile. You know what we need to do.
+    {%- elif drop>dev*2 -%} Is it time for a {{ self::ra(act=action) }} senpai?
+    {% else -%} Was curious senpai... do you think I'm cuter than Saki?
+    {%- endif -%}
+	 
+  {%- elif action[0].type == "kakan" or action[0].type == "daiminkan" -%}
+    <!-- &Kan PAI -->
+	{%- if drop>dev*50 -%} No need to think just do it! Kaaaaaan!
+    {%- elif drop>dev*20 -%} Surely it is worthwhile to Kan this.
+    {%- elif drop>dev*5 -%} At this point you may as well Kan senpai.
+    {%- elif drop>dev*2 -%} Maybe Kan? There is some benefit.
+    {% else -%} Sorry senpai but my Kan judgement is not always the best.
+    {%- endif -%}	 	
+	
+  {%- elif action[0].type == "none" -%} 
+	 <!-- Pass -->
+	{%- if drop>dev*50 -%} You should just {{ self::ra(act=action) }} here senpai.
+    {%- elif drop>dev*20 -%} {{ self::ra(act=action) }} looks to be the best choice.
+    {%- elif drop>dev*5 -%} {{ self::ra(act=action) }} in this situation I think.
+    {%- elif drop>dev*2 -%} I slightly favor {{ self::ra(act=action) }} here.
+    {% else -%} It is close. Maybe {{ self::ra(act=action) }} on it?
+    {%- endif -%}
+	 
+  {%- elif action[0].type == "ryukyoku" -%}
+    <!-- Why is this here skip -->
+	
+  {%- elif action[0].type == "hora" -%}
+    {%- if action[0].target == action[0].actor -%}
+      <!-- This is a Tsumo -->
+	  {%- if drop>dev*50 -%} Being a Russian cheater won't make me like you senpai!
+		{%- elif drop>dev*25 -%} Wow you didn't {{ self::ra(act=action) }} that? You surprised me senpai.
+		{%- elif drop>dev*10 -%} I think you should still {{ self::ra(act=action) }} here senpai.
+		{% else -%} It is close but {{ self::ra(act=action) }} may be the best choice.
+		{%- endif -%}	
+    {% else -%}
+      <!-- This is a Ron -->
+		{%- if drop>dev*50 -%} {{ self::ra(act=action) }}, Ron, Ron, Ron, RON! RON! RON! RON!
+		{%- elif drop>dev*25 -%} What? Why didn't you Ron{{ self::ra(act=action) }} senpai?
+		{%- elif drop>dev*10 -%} It is better to {{ self::ra(act=action) }} here than pass senpai.
+		{% else -%} It might not be clear but just {{ self::ra(act=action) }} and be done with it.
+		{%- endif -%}	
+    {%- endif -%}	
+
+  {% else -%}
+    <!-- Regular discard -->	
+    {%- if drop>dev*100 -%} {{ self::ra(act=action) }} has the Akochan seal of approval!
+    {%- elif drop>dev*90.0 -%} {{ self::ra(act=action) }} is what you should have done senpai!
+    {%- elif drop>dev*80.0 -%} {{ self::ra(act=action) }} is superb! Go with this.
+    {%- elif drop>dev*75.0 -%} {{ self::ra(act=action) }} is great why didn't you go for it?
+    {%- elif drop>dev*70.0 -%} {{ self::ra(act=action) }} please. Do better next time.
+    {%- elif drop>dev*60.0 -%} {{ self::ra(act=action) }} senpai! That is the correct choice.
+    {%- elif drop>dev*50.0 -%} {{ self::ra(act=action) }} is what I want here!
+    {%- elif drop>dev*40.0 -%} {{ self::ra(act=action) }} is looking really good to me.
+    {%- elif drop>dev*35.0 -%} {{ self::ra(act=action) }} would be a sensible choice senpai.
+    {%- elif drop>dev*30.0 -%} {{ self::ra(act=action) }} is an excellent choice.
+    {%- elif drop>dev*25.0 -%} {{ self::ra(act=action) }} would be a great improvement here.
+    {%- elif drop>dev*20.0 -%} {{ self::ra(act=action) }} is exactly right here.
+    {%- elif drop>dev*17.5 -%} {{ self::ra(act=action) }} looks like it would be be nice here.
+    {%- elif drop>dev*15.0 -%} {{ self::ra(act=action) }} would be worthwhile senpai.
+    {%- elif drop>dev*12.5 -%} {{ self::ra(act=action) }} surely it is a better choice here.
+    {%- elif drop>dev*10.0 -%} {{ self::ra(act=action) }} is a decent choice here.
+    {%- elif drop>dev*7.5 -%} {{ self::ra(act=action) }} is worth a look senpai.
+    {%- elif drop>dev*5.0 -%} {{ self::ra(act=action) }} should be a slightly stronger choice.
+    {%- elif drop>dev*4.0 -%} {{ self::ra(act=action) }} has some merit to considering.
+    {%- elif drop>dev*3.0 -%} {{ self::ra(act=action) }} might be a little better.
+    {%- elif drop>dev*2.0 -%} {{ self::ra(act=action) }} is possibly better.
+    {%- elif drop>dev*1.8 -%} {{ self::ra(act=action) }} is what I was thinking.
+    {%- elif drop>dev*1.7 -%} {{ self::ra(act=action) }} is not too bad either don't you think senpai?
+    {%- elif drop>dev*1.5 -%} {{ self::ra(act=action) }} looks okay too.
+    {%- elif drop>dev*1.3 -%} {{ self::ra(act=action) }} is similar to your choice.
+    {%- elif drop>dev*1.2 -%} {{ self::ra(act=action) }} but your choice is good too.
+    {% else -%} {{ self::ra(act=action) }} maybe?
+    {%- endif -%}
+
+  {%- endif -%}
+  
+{%- endmacro render_akotext -%}
+
+
+ <!-- Generate a different face based on had bad the discard was -->
+{%- macro render_akoface(dropped_ev, dev_threshold) -%}
+ 
+  {%- if (dropped_ev) > dev_threshold * 50 -%} 
+    collapse akodisagree akoface5
+  {%- elif (dropped_ev) > dev_threshold * 20 -%} 
+    collapse akodisagree akoface4
+  {%- elif (dropped_ev) > dev_threshold * 5 -%} 
+    collapse akodisagree akoface3
+  {%- elif (dropped_ev) > dev_threshold * 2 -%} 
+    collapse akodisagree akoface2
+  {% else -%}
+	collapse akodisagree akoface1
+  {%- endif -%}
+{%- endmacro render_akoface -%}
+
+ <!--
+ Tiers
+0.0-0.2 = 0
+0.2-0.5 = 2
+0.5-2.0 = 5
+2.0-5.0 = 20
+5.0-max = 50
+ -->
+
+ <!-- Duplicate of the other function with little tweaks to make nicer flowing text -->
+{%- macro render_action_ako(action) -%}
+  {%- if action[0].type == "none" -%}
+    {% if lang == "en" %}Pass{% else %}スルー{% endif %}
+  {%- elif action[0].type == "dahai" -%}
+    {% if lang == "en" %}Discarding{% else %}打{% endif %}
+    {{ self::render_pai(pai=action[0].pai) }}
+  {%- elif action[0].type == "reach" -%}
+    {% if lang == "en" %}Discard{% else %}打{% endif %}
+    {{ self::render_pai(pai=action[1].pai) }}
+    {% if lang == "en" %}Riichi{% else %}リーチ{% endif %}
+  {%- elif action[0].type == "hora" -%}
+    {%- if action[0].target == action[0].actor -%}
+      {% if lang == "en" %}Tsumo{% else %}ツモ{% endif %}
+    {% else -%}
+      {% if lang == "en" %}Ron{% else %}ロン{% endif %}
+    {%- endif -%}
+  {%- elif action[0].type == "chi" -%}
+    {%- for pai in action[0].consumed -%}
+      {{- self::render_pai(pai=pai) -}}
+    {% endfor %}
+    {% if lang == "en" %}Chii, cut{% else %}チー打{% endif %}
+    {{ self::render_pai(pai=action[1].pai) }}
+  {%- elif action[0].type == "pon" -%}
+    {%- for pai in action[0].consumed -%}
+      {{- self::render_pai(pai=pai) -}}
+    {% endfor %}
+    {% if lang == "en" %}Pon, cut{% else %}ポン打{% endif %}
+    {{ self::render_pai(pai=action[1].pai) }}
+  {%- elif action[0].type == "kakan" or action[0].type == "daiminkan" -%}
+    {% if lang == "en" %}&Kan{% else %}カン{% endif %}
+    {{ self::render_pai(pai=action[0].pai) }}
+  {%- elif action[0].type == "ankan" -%}
+    {% if lang == "en" %}Kan{%- else %}カン{% endif %}
+    {{ self::render_pai(pai=action[0].consumed[0]) }}
+  {%- elif action[0].type == "ryukyoku" -%}
+    {% if lang == "en" %}Ryuukyoku{%- else %}流局{% endif %}
+  {%- endif -%}
+{%- endmacro render_action_ako -%}
+
+{%- macro pai_to_text(pai) -%}
+
+  {%- if pai == "back" -%}X
+  
+  {%- elif pai == "1m" -%}m1{%- elif pai == "2m" -%}m2{%- elif pai == "3m" -%}m3{%- elif pai == "4m" -%}m4
+  {%- elif pai == "5m" -%}m5{%- elif pai == "6m" -%}m6{%- elif pai == "7m" -%}m7{%- elif pai == "8m" -%}m8
+  {%- elif pai == "9m" -%}m9{%- elif pai == "5mr" -%}m0
+  
+  {%- elif pai == "1p" -%}p1{%- elif pai == "2p" -%}p2{%- elif pai == "3p" -%}p3{%- elif pai == "4p" -%}p4
+  {%- elif pai == "5p" -%}p5{%- elif pai == "6p" -%}p6{%- elif pai == "7p" -%}p7{%- elif pai == "8p" -%}p8
+  {%- elif pai == "9p" -%}p9{%- elif pai == "5pr" -%}p0
+  
+  {%- elif pai == "1s" -%}s1{%- elif pai == "2s" -%}s2{%- elif pai == "3s" -%}s3{%- elif pai == "4s" -%}s4
+  {%- elif pai == "5s" -%}s5{%- elif pai == "6s" -%}s6{%- elif pai == "7s" -%}s7{%- elif pai == "8s" -%}s8
+  {%- elif pai == "9s" -%}s9{%- elif pai == "5sr" -%}s0
+  
+  {%- elif pai == "E" -%}z1{%- elif pai == "S" -%}z2{%- elif pai == "W" -%}z3{%- elif pai == "N" -%}z4
+  {%- elif pai == "C" -%}z5{%- elif pai == "F" -%}z6{%- elif pai == "P" -%}z7
+    
+  {%- else -%}
+    {{ pai | lower }}
+  {%- endif -%}
+
+{%- endmacro pai_to_text -%}
+
+{%- macro make_kobalab_string(entry) -%}
+
+  {%- for pai in entry.state.tehai -%}
+    {{ self::pai_to_text(pai=pai) }}
+  {%- endfor -%}
+  
+{%- endmacro make_kobalab_string -%}
+
 {%- macro render_pai(pai) -%}
   {%- if pai == "back" -%}
     <svg class="tile">
@@ -69,6 +290,10 @@
       {% if lang == "en" %}Ron by&nbsp;{% else %}ロン：{% endif %}
     {%- endif -%}
     {{ self::render_actor(actor=end_status.actor, target_actor=target_actor) }}
+	{%- if end_status.target != end_status.actor -%}
+		{% if lang == "en" %}on{% else %}->{% endif %}
+		{{ self::render_actor(actor=end_status.target, target_actor=target_actor) }}
+	{%- endif -%}
     {{ end_status.deltas[end_status.actor] }}
   {%- else -%}
     {% if lang == "en" %}Ryuukyoku{% else %}流局{% endif %}

@@ -23,7 +23,7 @@
   <details open class="collapse">
     <summary>{% if lang == "en" %}Game Summary{% else %}目次{% endif %}</summary>
     <div class="kyoku-toc">
-      <ol class="kyoku-list">
+	  <ol class="kyoku-list">
         {%- for item in kyokus -%}
           <li class="kyoku-item">
             <a href="#kyoku-{{ item.kyoku }}-{{ item.honba }}">
@@ -47,7 +47,24 @@
           </li>
         {%- endfor -%}
       </ol>
+
+	  <ol class="end-score-item">
+	  {%- for item in kyokus -%}
+		<li>
+          <span class="end-score">
+          {%- if item.hand_score*100!=0 -%}
+		    {{ pretty_round(num=(item.hand_score*100), prec=1) }}%
+		  {%- else -%}
+			-
+		  {%- endif -%}
+          </span>
+		</li>
+		 {%- endfor -%}
+      </ol>
+
     </div>
+
+	<span class="top-score">Overall Score: {{ pretty_round(num=(metadata.score*100), prec=1) }}%</span>
   </details>
 
   <details class="collapse">
@@ -80,6 +97,12 @@
     </dl>
   </details>
 
+	<p class="togglelinks">
+	[<a href="javascript:{}" onclick="toggleViewers()" id="buttonViewers">Close Replay Viewers</a>]
+	[<a href="javascript:{}" onclick="toggleErrors()" id="buttonErrors">Close Errors</a>]
+	[<a href="javascript:{}" onclick="toggleAkosays()" id="buttonAkosays">Hide Akosays</a>]
+	</p>
+
   {%- for item in kyokus -%}
     <section style="z-index: {{ 10 + loop.index0 }}">
       <h1 id="kyoku-{{ item.kyoku }}-{{ item.honba }}" class="kyoku-heading">
@@ -99,11 +122,21 @@
             {%- endfor -%}
           </span>
         </div>
+
+		<div class="end-score-item">
+          <span class="end-score">
+		  {%- if item.hand_score*100!=0 -%}
+			({{ pretty_round(num=(item.hand_score*100), prec=1) }}%)
+		  {%- else -%}
+            
+		  {%- endif -%}
+          </span>
+        </div>
       </h1>
 
       {%- if splited_logs is defined -%}
         <div class="sticky l-box" style="z-index: {{ 15 + loop.index0 }}" {% if layout == "horizontal" %} horizontal="1" {% endif %} >
-          <details {% if item.entries | length != 0 %} open {% endif %} class="collapse">
+          <details {% if item.entries | length != 0 %} open {% endif %} class="collapse replayviewer">
             <summary>{% if lang == "en" %}Replay Viewer{%- else -%}牌譜ビューア{% endif %}</summary>
             <iframe
               src="https://tenhou.net/5/?tw={{ target_actor }}#json={{ splited_logs[loop.index0] | json_encode() }}"
@@ -131,7 +164,8 @@
       {%- endif -%}
       {%- for entry in item.entries -%}
         {%- if entry.acceptance == "disagree" -%}
-          <details open class="collapse">
+          <details open class="{{- macros::render_akoface(dropped_ev=entry.dev, dev_threshold=metadata.deviation_threshold) -}}">
+		  <div class="akotext">{{- macros::render_akotext(drop=entry.dev, dev=metadata.deviation_threshold, action=entry.expected) -}}</div>
         {%- else -%}
           <details class="collapse">
         {%- endif -%}
@@ -142,7 +176,7 @@
               {{ entry.junme }} 巡
             {%- endif -%}
             {%- if entry.acceptance == "disagree" -%}
-              &nbsp;&nbsp;&nbsp;❌
+              &nbsp;&nbsp;&nbsp;❌&nbsp;&nbsp;-{{- pretty_round(num=entry.dev, prec=2) -}}&nbsp;EV
             {%- elif entry.acceptance == "tolerable" -%}
               &nbsp;&nbsp;&nbsp;😐
             {%- endif -%}
@@ -263,6 +297,7 @@
                   {%- endfor -%}
                 </tbody>
               </table>
+			  [<a href="https://kobalab.net/majiang/dapai.html#{{- macros::make_kobalab_string(entry=entry) -}}" target="_blank">Kobalab (no dora/round)</a>]
             </details>
           {%- endif -%}
         </details>
@@ -274,6 +309,69 @@
   <script>{%- include "report.js" -%}</script>
   <style>{%- include "report.css" -%}</style>
   {%- include "pai.svg" -%}
+
+  <script>
+function toggleAkosays()
+{
+    
+	var elem = document.getElementById("buttonAkosays");
+	if(elem.textContent.valueOf() === "Hide Akosays")
+	{
+		// toggle the elements off
+		var elements = document.getElementsByClassName('akotext');
+		for (var i = 0; i < elements.length; i++){elements[i].style.display = 'none';}
+		var elements = document.getElementsByClassName('akodisagree');
+		for (var i = 0; i < elements.length; i++){elements[i].style.backgroundSize = 0;}
+		elem.textContent = "Show Akosays";
+	}
+	else
+	{
+		// toggle the elements on
+		var elements = document.getElementsByClassName('akotext');
+		for (var i = 0; i < elements.length; i++){elements[i].style.display = 'block';}
+		var elements = document.getElementsByClassName('akodisagree');
+		for (var i = 0; i < elements.length; i++){elements[i].style.backgroundSize = null;}
+		elem.textContent = "Hide Akosays";
+	}	
+}
+
+function toggleViewers()
+{
+	// toggle on and off all the tenhou replay viewers
+	var elem = document.getElementById("buttonViewers");
+	if(elem.textContent.valueOf() === "Close Replay Viewers")
+	{
+		var elements = document.getElementsByClassName('replayviewer');
+		for (var i = 0; i < elements.length; i++){elements[i].open = false;}
+		elem.textContent = "Open Replay Viewers";
+	}
+	else
+	{
+		var elements = document.getElementsByClassName('replayviewer');
+		for (var i = 0; i < elements.length; i++){elements[i].open = true;}
+		elem.textContent = "Close Replay Viewers";
+	}
+}
+
+function toggleErrors()
+{
+	// toggle on and off all the red X errors
+	var elem = document.getElementById("buttonErrors");
+	if(elem.textContent.valueOf() === "Close Errors")
+	{
+		var elements = document.getElementsByClassName('akodisagree');
+		for (var i = 0; i < elements.length; i++){elements[i].open = false;}
+		elem.textContent = "Open Errors";
+	}
+	else
+	{
+		var elements = document.getElementsByClassName('akodisagree');
+		for (var i = 0; i < elements.length; i++){elements[i].open = true;}
+		elem.textContent = "Close Errors";
+	}
+	
+}
+</script> 
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
